@@ -1,0 +1,1 @@
+A node server for screenshot testing that takes base64 string for captured screenshot and compares it with exisiting screenshot and generates diff image and a test report as an html file.

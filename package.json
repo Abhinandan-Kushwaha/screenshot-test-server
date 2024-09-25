@@ -1,0 +1,37 @@
+{
+  "name": "screenshot-test-server",
+  "version": "0.0.1",
+  "description": "A node server for screenshot testing that takes base64 string for captured screenshot and compares it with exisiting screenshot and generates diff image and a test report as an html file.",
+  "main": "./dist/server.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p . && cp './src/resemble.js' './dist/resemble.js' && mv './src/utils.js' './dist/utils.js' && mv './src/server.js' './dist/server.js'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "typescript": "^5.6.2"
+  },
+  "repository": "https://github.com/Abhinandan-Kushwaha/screenshot-test-server",
+  "author": "Abhinandan Kushwaha <kushabhi5@gmail.com> (https://github.com/Abhinandan-Kushwaha)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Abhinandan-Kushwaha/screenshot-test-server/issues"
+  },
+  "homepage": "https://github.com/Abhinandan-Kushwaha/screenshot-test-server#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "screenshot-test",
+    "screenshot",
+    "test",
+    "snapshot-test",
+    "snapshot"
+  ]
+}
