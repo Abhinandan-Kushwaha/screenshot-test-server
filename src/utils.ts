@@ -248,7 +248,7 @@ function getHtmlContent(
                   document.getElementById("mainBody").innerHTML = diffHtmlString
                 }
                 function showPassed() {
-                  document.getElementById("mainBody").innerHTML = passedHtmlString}
+                  document.getElementById("mainBody").innerHTML = passedHtmlString
                 }
                 function onloaded () {
                   let node = document.getElementById('acceptAll')
