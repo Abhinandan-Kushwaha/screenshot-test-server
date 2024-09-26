@@ -246,4 +246,9 @@ http
       res.end(msg)
     }
   })
-  .listen(port)
+  .listen(port, () => {
+    console.log(`Screenshot-test-server running on port ${port}`)
+    console.log(
+      'Render the tests on your emulator / device and hit the "Capture and Compare" button.'
+    )
+  })

@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-const resemble = require ('./resemble')
+const resemble = require('./resemble')
 
 async function writeDiffImage(data: any, diffPath: string, id: string) {
   const dataString = data.getImageDataUrl().split(',')[1]
@@ -67,9 +67,7 @@ const getMetaDataHtml = (
   </div>
   </div>`
 
-async function difHtml(
-  newPath: string,
-  oldPath: string,
+async function failedHtml(
   diffPath: string,
   path: string,
   maxWidthOuter: number,
@@ -90,7 +88,7 @@ async function difHtml(
 
       const metaDataHtml = getMetaDataHtml(title, description, id)
 
-      htmlStr += `<div style="border: 2px solid #D45553; border-radius: 4px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
+      htmlStr += `<div style="border: 2px solid #D45553; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
         ${metaDataHtml}
         <div style="${rowStyle} background-color: ${backgroundColor};">
         <div><h3>Original:</h3><img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/><button onclick="accept('${path}','${id}',${maxWidth})" style="background-color: #23569E; color: white; padding: 4px 8px;">Accept Changes</button></div>
@@ -106,11 +104,10 @@ async function difHtml(
   return { htmlStr, length }
 }
 
-async function allHtml(
+async function passedHtml(
   newPath: string,
   oldPath: string,
   diffPath: string,
-  path: string,
   maxWidthOuter: number,
   metadata: any
 ) {
@@ -130,16 +127,8 @@ async function allHtml(
         fs.existsSync(`${newPath}/${file}`) &&
         fs.existsSync(`${diffPath}/${file}`)
       ) {
-        htmlStr += `<div style="border: 2px solid #D45553; border-radius: 4px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
-          ${metaDataHtml}
-          <div style="${rowStyle} background-color: ${backgroundColor};">
-          <div><h3>Original:</h3><img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/><button onclick="accept('${path}','${id}',${maxWidth})" style="background-color: #23569E; color: white; padding: 4px 8px;">Accept Changes</button></div>
-          <div><h3>Modified:</h3><img style="max-width: ${maxWidth}px;" src="./new/${file}" alt="./new/${file}"/></div>
-          <div><h3>Diff:</h3><img style="max-width: ${maxWidth}px;" src="./diff/${file}" alt="./diff/${file}"/></div>
-          </div>
-        </div>`
       } else {
-        htmlStr += `<div style="border: 2px solid #89AB59; border-radius: 4px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
+        htmlStr += `<div style="border: 2px solid #89AB59; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
           ${metaDataHtml}
           <div style="${rowStyle} background-color: ${backgroundColor};">
           <img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/>
@@ -153,9 +142,57 @@ async function allHtml(
   return { htmlStr, length }
 }
 
+// async function allHtml(
+//   newPath: string,
+//   oldPath: string,
+//   diffPath: string,
+//   path: string,
+//   maxWidthOuter: number,
+//   metadata: any
+// ) {
+//   let htmlStr = '',
+//     length = 0
+//   try {
+//     const files = await fs.readdirSync(oldPath)
+//     length = files.length
+//     files.forEach((file) => {
+//       const len = file.length
+//       const id = file.substring(0, len - 4)
+//       const component = metadata.components.find((item: any) => item.id === id)
+//       let { title, description, backgroundColor, maxWidth } = component
+//       maxWidth = maxWidth || maxWidthOuter
+//       const metaDataHtml = getMetaDataHtml(title, description, id)
+//       if (
+//         fs.existsSync(`${newPath}/${file}`) &&
+//         fs.existsSync(`${diffPath}/${file}`)
+//       ) {
+//         htmlStr += `<div style="border: 2px solid #D45553; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
+//           ${metaDataHtml}
+//           <div style="${rowStyle} background-color: ${backgroundColor};">
+//           <div><h3>Original:</h3><img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/><button onclick="accept('${path}','${id}',${maxWidth})" style="background-color: #23569E; color: white; padding: 4px 8px;">Accept Changes</button></div>
+//           <div><h3>Modified:</h3><img style="max-width: ${maxWidth}px;" src="./new/${file}" alt="./new/${file}"/></div>
+//           <div><h3>Diff:</h3><img style="max-width: ${maxWidth}px;" src="./diff/${file}" alt="./diff/${file}"/></div>
+//           </div>
+//         </div>`
+//       } else {
+//         htmlStr += `<div style="border: 2px solid #89AB59; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
+//           ${metaDataHtml}
+//           <div style="${rowStyle} background-color: ${backgroundColor};">
+//           <img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/>
+//           </div>
+//           </div>`
+//       }
+//     })
+//   } catch (err) {
+//     console.error('Unable to scan directory: ' + err)
+//   }
+//   return { htmlStr, length }
+// }
+
 function getHtmlContent(
   allHtmlString: string,
   diffHtmlString: string,
+  passedHtmlString: string,
   path: string,
   maxWidth: number,
   all: number,
@@ -171,6 +208,8 @@ function getHtmlContent(
           <head>
               <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
               <script>
+                  var diffHtmlString = \`${diffHtmlString}\`
+                  var passedHtmlString = \`${passedHtmlString}\`
                   async function update (path,id,maxWidth) {
                     await fetch(\`${urlForUpdate}?path=\${path}&id=\${id}&maxWidth=\${maxWidth}\`)
                   }
@@ -203,10 +242,13 @@ function getHtmlContent(
                   }
                 }
                 function showAll() {
-                  document.getElementById("mainBody").innerHTML = \`${allHtmlString}\`
+                  document.getElementById("mainBody").innerHTML = diffHtmlString + passedHtmlString
                 }
                 function showDiff() {
-                  document.getElementById("mainBody").innerHTML = \`${diffHtmlString}\`
+                  document.getElementById("mainBody").innerHTML = diffHtmlString
+                }
+                function showPassed() {
+                  document.getElementById("mainBody").innerHTML = passedHtmlString}
                 }
                 function onloaded () {
                   let node = document.getElementById('acceptAll')
@@ -223,6 +265,13 @@ function getHtmlContent(
                   node.setAttribute('style', style+\` background-color: ${
                     failed ? '#EEB6B3' : '#C6E0C4'
                   }\`)
+
+                  node = document.getElementById('reportBox')
+                  style = node.getAttribute('style')
+                  node.setAttribute('style', style+\` background-color: ${
+                    failed ? '#350505' : '#001e03'
+                  }\`)
+
                   showAll();
                 }
               </script>
@@ -231,17 +280,18 @@ function getHtmlContent(
           <body onload="onloaded()" style="overflow: hidden; padding-bottom: 80px; margin: 0;">
             <div id="header" style="display: flex; justify-content: space-between; padding-bottom: 10px;">
               <div>
-                <input type="radio" name="choice" onclick="showAll()" checked> Show All </input>
-                <input type="radio" name="choice" onclick="showDiff()"> Show modified only </input>
+                <input type="radio" name="choice" onclick="showAll()" checked> All </input>
+                <input type="radio" name="choice" onclick="showDiff()"> Failed </input>
+                <input type="radio" name="choice" onclick="showPassed()"> Passed </input>
   
                 <div id="acceptAll">
-                    <button style="margin: 10px; padding: 6px 16px; background-color: #23569E; color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="acceptAll('${path}',${maxWidth})">
+                    <button style="margin: 10px; padding: 6px 16px; background-color: #23569E; color: white; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer;" onclick="acceptAll('${path}',${maxWidth})">
                       Accept all changes
                     </button>
                 </div>
               </div>
   
-              <div style="background-color: #0E1117; padding: 10px 24px; border-radius: 4px; width: 140px; margin-left: 10px; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">
+              <div id="reportBox" style="padding: 10px 24px; border-radius: 2px; width: 140px; margin-left: 10px; font-family: Arial, Helvetica, sans-serif;">
                 <div style="color: wheat; display: flex; justify-content: space-between; margin-bottom: 4px;">
                     <div>Total: </div>
                     <div>${all} </div>
@@ -277,25 +327,27 @@ export async function generateHtml(
   path: any,
   maxWidth: any,
   backgroundColor?: string,
-  metadata?: any
+  metadataParam?: any
 ) {
   const oldPath = path + '/old'
   const newPath = path + '/new'
   const diffPath = path + '/diff'
 
+  let metadata = metadataParam
+
   if (metadata) {
+    metadata = {
+      ...metadata,
+      components: metadata.components.map((item: any) => ({
+        ...item,
+        title: item.title.replaceAll('`', '"').replaceAll("'", '"'),
+        id: item.id.replaceAll('`', '"').replaceAll("'", '"'),
+        backgroundColor: item.backgroundColor || backgroundColor
+      }))
+    }
     try {
       const metadataPath = path + '/metadata.json'
-      await fs.writeFileSync(
-        metadataPath,
-        JSON.stringify({
-          ...metadata,
-          components: metadata.components.map((item: any) => ({
-            ...item,
-            backgroundColor: item.backgroundColor || backgroundColor
-          }))
-        })
-      )
+      await fs.writeFileSync(metadataPath, JSON.stringify(metadata))
       console.log(`Metadata file saved as ${metadataPath}`)
     } catch (err) {
       console.error('error while writing metadata file', err)
@@ -305,27 +357,28 @@ export async function generateHtml(
     metadata = JSON.parse(metadataStr.toString())
   }
 
-  const { htmlStr: allHtmlString, length: all } = await allHtml(
-    newPath,
-    oldPath,
+  const { htmlStr: diffHtmlString, length: failed } = await failedHtml(
     diffPath,
     path,
     maxWidth,
     metadata
   )
 
-  const { htmlStr: diffHtmlString, length: failed } = await difHtml(
+  const { htmlStr: passedHtmlString, length: passed } = await passedHtml(
     newPath,
     oldPath,
     diffPath,
-    path,
     maxWidth,
     metadata
   )
+
+  const allHtmlString = diffHtmlString + passedHtmlString
+  const all = failed + passed
 
   const finalHtmlString = getHtmlContent(
     allHtmlString,
     diffHtmlString,
+    passedHtmlString,
     path,
     maxWidth,
     all,

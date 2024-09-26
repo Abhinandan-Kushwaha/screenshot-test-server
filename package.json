@@ -1,13 +1,13 @@
 {
   "name": "screenshot-test-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A node server for screenshot testing that takes base64 string for captured screenshot and compares it with exisiting screenshot and generates diff image and a test report as an html file.",
   "main": "./dist/server.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p . && cp './src/resemble.js' './dist/resemble.js' && mv './src/utils.js' './dist/utils.js' && mv './src/server.js' './dist/server.js'",
+    "build": "rm -rf dist && tsc -p . && ./build.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
