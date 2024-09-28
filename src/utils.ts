@@ -90,7 +90,7 @@ async function failedHtml(
 
       htmlStr += `<div style="border: 2px solid #D45553; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
         ${metaDataHtml}
-        <div style="${rowStyle} background-color: ${backgroundColor};">
+        <div class="imgContainer" style="${rowStyle} background-color: ${backgroundColor};">
         <div><h3>Original:</h3><img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/><button onclick="accept('${path}','${id}',${maxWidth})" style="background-color: #23569E; color: white; padding: 4px 8px;">Accept Changes</button></div>
         <div><h3>Modified:</h3><img style="max-width: ${maxWidth}px;" src="./new/${file}" alt="./new/${file}"/></div>
         <div><h3>Diff:</h3><img style="max-width: ${maxWidth}px;" src="./diff/${file}" alt="./diff/${file}"/></div>
@@ -130,7 +130,7 @@ async function passedHtml(
       } else {
         htmlStr += `<div style="border: 2px solid #89AB59; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
           ${metaDataHtml}
-          <div style="${rowStyle} background-color: ${backgroundColor};">
+          <div class="imgContainer" style="${rowStyle} background-color: ${backgroundColor};">
           <img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/>
           </div>
           </div>`
@@ -190,7 +190,6 @@ async function passedHtml(
 // }
 
 function getHtmlContent(
-  allHtmlString: string,
   diffHtmlString: string,
   passedHtmlString: string,
   path: string,
@@ -274,6 +273,16 @@ function getHtmlContent(
 
                   showAll();
                 }
+
+                function toggle() {
+                  const nodes = document.getElementsByClassName('imgContainer')
+                  if(nodes && nodes.length){
+                    Array.from(nodes).forEach(node=>{
+                      style = node.getAttribute('style')
+                      node.setAttribute('style', style.includes('none') ? style.replace('none','flex') : style.replace('flex','none'))
+                    })
+                  }
+                }
               </script>
           </head>
   
@@ -285,9 +294,13 @@ function getHtmlContent(
                 <input type="radio" name="choice" onclick="showPassed()"> Passed </input>
   
                 <div id="acceptAll">
-                    <button style="margin: 10px; padding: 6px 16px; background-color: #23569E; color: white; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer;" onclick="acceptAll('${path}',${maxWidth})">
+                    <button style="margin-top: 10px; margin-left: 10px; padding: 6px 16px; background-color: #23569E; color: white; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer;" onclick="acceptAll('${path}',${maxWidth})">
                       Accept all changes
                     </button>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <input type="checkbox" onchange="toggle()">Hide images</input>
                 </div>
               </div>
   
@@ -371,12 +384,9 @@ export async function generateHtml(
     maxWidth,
     metadata
   )
-
-  const allHtmlString = diffHtmlString + passedHtmlString
   const all = failed + passed
 
   const finalHtmlString = getHtmlContent(
-    allHtmlString,
     diffHtmlString,
     passedHtmlString,
     path,
