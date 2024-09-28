@@ -91,8 +91,8 @@ async function failedHtml(
       htmlStr += `<div style="border: 2px solid #D45553; border-radius: 2px; margin: 12px 5px 20px 5px; padding: 5px; overflow: scroll; font-size: 14px">
         ${metaDataHtml}
         <div class="imgContainer" style="${rowStyle} background-color: ${backgroundColor};">
-        <div><h3>Original:</h3><img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/><button onclick="accept('${path}','${id}',${maxWidth})" style="background-color: #23569E; color: white; padding: 4px 8px;">Accept Changes</button></div>
-        <div><h3>Modified:</h3><img style="max-width: ${maxWidth}px;" src="./new/${file}" alt="./new/${file}"/></div>
+        <div><h3>Original:</h3><img style="max-width: ${maxWidth}px;" src="./old/${file}" alt="./old/${file}"/></div>
+        <div><h3>Modified:</h3><img style="max-width: ${maxWidth}px;" src="./new/${file}" alt="./new/${file}"/><button onclick="accept('${path}','${id}',${maxWidth})" style="background-color: #23569E; color: white; padding: 4px 8px;">Accept Changes</button></div>
         <div><h3>Diff:</h3><img style="max-width: ${maxWidth}px;" src="./diff/${file}" alt="./diff/${file}"/></div>
         </div>
   </div>`
@@ -242,12 +242,15 @@ function getHtmlContent(
                 }
                 function showAll() {
                   document.getElementById("mainBody").innerHTML = diffHtmlString + passedHtmlString
+                  document.getElementById("chk").checked = false
                 }
                 function showDiff() {
                   document.getElementById("mainBody").innerHTML = diffHtmlString
+                  document.getElementById("chk").checked = false
                 }
                 function showPassed() {
                   document.getElementById("mainBody").innerHTML = passedHtmlString
+                  document.getElementById("chk").checked = false
                 }
                 function onloaded () {
                   let node = document.getElementById('acceptAll')
@@ -300,7 +303,7 @@ function getHtmlContent(
                 </div>
 
                 <div style="margin-top: 10px;">
-                    <input type="checkbox" onchange="toggle()">Hide images</input>
+                    <input id="chk" type="checkbox" onchange="toggle()">Hide images</input>
                 </div>
               </div>
   
