@@ -289,7 +289,7 @@ function getHtmlContent(
               </script>
           </head>
   
-          <body onload="onloaded()" style="overflow: hidden; padding-bottom: 80px; margin: 0;">
+          <body onload="onloaded()" style="overflow: hidden; margin: 0;">
             <div id="header" style="display: flex; justify-content: space-between; padding-bottom: 10px;">
               <div>
                 <input type="radio" name="choice" onclick="showAll()" checked> All </input>
@@ -323,7 +323,7 @@ function getHtmlContent(
               </div>
             </div>
   
-            <div id="mainBody" style="overflow-y: scroll; height: 100%">
+            <div id="mainBody" style="overflow-y: scroll; height: 90%">
             </div>
           </body>
   </html>
