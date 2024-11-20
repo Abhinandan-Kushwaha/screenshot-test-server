@@ -8,6 +8,8 @@ const port = process.argv[2] || 8080
 http
   .createServer(async function (req: any, res: any) {
     res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
     if (req.method === 'POST' && req.url === '/data') {
       let body = ''
