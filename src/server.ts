@@ -1,12 +1,17 @@
 import * as url from 'url'
 import * as fs from 'fs'
 import { base64_encode, compareImages, generateHtml, msg } from './utils'
+import puppeteer from 'puppeteer'
 var http = require('http')
 
-const port = process.argv[2] || 8080
+const isHeadLess = process.argv[2] ? JSON.parse(process.argv[2]) : true
+const uiUrl = process.argv[3] || 'http://localhost:8081'
+const serverPort = process.argv[4] || 8080
+var page:any
 
 http
   .createServer(async function (req: any, res: any) {
+
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -22,7 +27,14 @@ http
       // End event when all data is received
       req.on('end', async () => {
         try {
-          const { data, id, path, showDiffInGrayScale } = JSON.parse(body) // Parse the received JSON
+          let { data, id, path, showDiffInGrayScale } = JSON.parse(body) // Parse the received JSON
+
+          if(!data && isHeadLess) {
+            console.log('id',id)
+            const card = await page.$(`#${id}`);
+            console.log('uiComponent',card)
+            data = await card?.screenshot({encoding: 'base64'});
+          }
 
           if (!fs.existsSync(path)) {
             // If the folder itself not present -> 1st ever run of the testing library
@@ -114,7 +126,7 @@ http
         try {
           const { path, maxWidth, backgroundColor, metaData } = JSON.parse(body) // Parse the received JSON
 
-          await generateHtml(path, maxWidth, backgroundColor, metaData)
+          await generateHtml(path, maxWidth, Number(serverPort), backgroundColor, metaData)
 
           res.writeHead(200, { 'Content-Type': 'application/json' })
           res.end(
@@ -167,7 +179,7 @@ http
           console.error(`Error deleting ${newFilePath}:`, err)
         }
 
-        await generateHtml(path, maxWidth)
+        await generateHtml(path, maxWidth, Number(serverPort))
 
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(
@@ -221,7 +233,7 @@ http
               console.error(`Error deleting ${newPath}:`, err)
             }
 
-            await generateHtml(path, maxWidth)
+            await generateHtml(path, maxWidth, Number(serverPort))
           })
         } else {
           try {
@@ -231,7 +243,7 @@ http
             console.error(`Error deleting ${diffPath}:`, err)
           }
 
-          await generateHtml(path, maxWidth)
+          await generateHtml(path, maxWidth, Number(serverPort))
         }
 
         res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -248,9 +260,17 @@ http
       res.end(msg)
     }
   })
-  .listen(port, () => {
-    console.log(`Screenshot-test-server running on port ${port}`)
-    console.log(
-      'Render the tests on your emulator / device and hit the "Capture and Compare" button.'
-    )
+  .listen(serverPort, async() => {
+    console.log(`Screenshot-test-server running on port ${serverPort}`)
+    if(isHeadLess) {
+      const browser = await puppeteer.launch({headless: true});
+      console.log('browser',browser)
+      page = await browser.newPage();
+      await page.goto(uiUrl);
+    }
+    else {
+      console.log(
+        'Render the tests on your emulator / device and hit the "Capture and Compare" button.'
+      )
+    }
   })
