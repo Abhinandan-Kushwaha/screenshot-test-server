@@ -196,11 +196,11 @@ function getHtmlContent(
   maxWidth: number,
   all: number,
   failed: number,
+  serverPort: number,
   metadata: any
 ) {
-  const { port } = metadata
   const localhostUrl = 'http://127.0.0.1'
-  const url = `${localhostUrl}:${port}`
+  const url = `${localhostUrl}:${serverPort}`
   const urlForUpdate = `${url}/update`
   const urlForReset = `${url}/reset`
   return `<html>
@@ -342,6 +342,7 @@ export const msg = `
 export async function generateHtml(
   path: any,
   maxWidth: any,
+  serverPort: number,
   backgroundColor?: string,
   metadataParam?: any
 ) {
@@ -396,6 +397,7 @@ export async function generateHtml(
     maxWidth,
     all,
     failed,
+    serverPort,
     metadata
   )
 

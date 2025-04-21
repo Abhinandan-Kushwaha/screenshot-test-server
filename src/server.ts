@@ -127,7 +127,7 @@ http
         try {
           const { path, maxWidth, backgroundColor, metaData } = JSON.parse(body) // Parse the received JSON
 
-          await generateHtml(path, maxWidth, backgroundColor, metaData)
+          await generateHtml(path, maxWidth, Number(serverPort), backgroundColor, metaData)
 
           res.writeHead(200, { 'Content-Type': 'application/json' })
           res.end(
@@ -180,7 +180,7 @@ http
           console.error(`Error deleting ${newFilePath}:`, err)
         }
 
-        await generateHtml(path, maxWidth)
+        await generateHtml(path, maxWidth, Number(serverPort))
 
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(
@@ -234,7 +234,7 @@ http
               console.error(`Error deleting ${newPath}:`, err)
             }
 
-            await generateHtml(path, maxWidth)
+            await generateHtml(path, maxWidth, Number(serverPort))
           })
         } else {
           try {
@@ -244,7 +244,7 @@ http
             console.error(`Error deleting ${diffPath}:`, err)
           }
 
-          await generateHtml(path, maxWidth)
+          await generateHtml(path, maxWidth, Number(serverPort))
         }
 
         res.writeHead(200, { 'Content-Type': 'application/json' })
