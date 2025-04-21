@@ -4,7 +4,7 @@ import { base64_encode, compareImages, generateHtml, msg } from './utils'
 import puppeteer from 'puppeteer'
 var http = require('http')
 
-const isHeadLess = process.argv[2] || true
+const isHeadLess = process.argv[2] ? JSON.parse(process.argv[2]) : true
 const uiUrl = process.argv[3] || 'http://localhost:8081'
 const serverPort = process.argv[4] || 8080
 var page:any
@@ -31,7 +31,6 @@ http
 
           if(!data && isHeadLess) {
             console.log('id',id)
-            console.log('page',page)
             const card = await page.$(`#${id}`);
             console.log('uiComponent',card)
             data = await card?.screenshot({encoding: 'base64'});
